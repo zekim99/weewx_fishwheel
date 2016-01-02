@@ -16,18 +16,18 @@ import weewx.restx
 import weeutil.weeutil
 from weeutil.weeutil import to_int, to_float, to_bool, timestamp_to_string, accumulateLeaves
 
-class Fishwheel(weewx.restx.StdRESTful):
+class wxPublish(weewx.restx.StdRESTful):
 
     def __init__(self, engine, config_dict):
-        super(Fishwheel, self).__init__(engine, config_dict)
+        super(wxPublish, self).__init__(engine, config_dict)
 
         # read configuration values to dictionary
         try:
             _fw_dict = weeutil.weeutil.accumulateLeaves(
-                config_dict['StdRESTful']['Fishwheel'], max_level=1)
+                config_dict['StdRESTful']['wxPublish'], max_level=1)
         except KeyError as exc:
             syslog.syslog(
-                syslog.LOG_DEBUG, "restx: Fishwheel: "
+                syslog.LOG_DEBUG, "restx: wxPublish: "
                 "Data will not be posted: Missing option %s" % exc
             )
             return
@@ -39,7 +39,7 @@ class Fishwheel(weewx.restx.StdRESTful):
         )
 
         self.loop_queue = Queue.Queue()
-        self.loop_thread = FishwheelThread(
+        self.loop_thread = wxPublishThread(
             self.loop_queue,
             _manager_dict,
             **_fw_dict
@@ -51,7 +51,7 @@ class Fishwheel(weewx.restx.StdRESTful):
         self.loop_queue.put(event.packet)
 
 
-class FishwheelThread(weewx.restx.RESTThread):
+class wxPublishThread(weewx.restx.RESTThread):
 
     DEFAULT_HOST = 'localhost'
     DEFAULT_PORT = '8080'
@@ -64,7 +64,7 @@ class FishwheelThread(weewx.restx.RESTThread):
                  log_success=True, log_failure=True,
                  timeout=10, max_tries=3, retry_wait=5):
 
-        super(FishwheelThread, self).__init__(queue,
+        super(wxPublishThread, self).__init__(queue,
                                               protocol_name=protocol_name,
                                               manager_dict=manager_dict,
                                               post_interval=post_interval,

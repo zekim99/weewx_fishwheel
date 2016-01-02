@@ -1,29 +1,27 @@
-# weewx_fishwheel
+# weewx_wxPublish
 weewx extension that POSTs live wx data to remote RESTful endpoint
 
 Installation:
 -------------
 
-  1) Download the release from github repo https://github.com/zekim99/weewx-fishwheel to ~/Downloads/weewx-fishwheel-master.tar.gz
+  1) copy the file wxPublish.py to your local weewx installation's bin/user directory
 
-  2) Install with weewx's extension manager: in weewx directory run: ./setup.py --extension --install ~/Downloads/weewx-fishwheel-master.tar.gz
-
-  3) modify weewx.conf:
+  2) modify weewx.conf, adding:
 
     [StdRESTful]
-      [[Fishwheel]]
+      [[wxPublish]]
           host = home.example.com
           port = 8080
           prefix = wxupdate
 
-4) restart weewx
+3) restart weewx
 
 Usage
 -----
-When events are received from the weather monitoring device, a POST message will be sent to the host defined in 
+When events are received from the weather monitoring device, a POST message will be sent to the host defined in
 weewx.conf, containing all weewx supported data fields:
 
-
+```
    "monthET":0.0,
    "heatindex":38.3,
    "dayET":0.0,
@@ -113,7 +111,7 @@ weewx.conf, containing all weewx supported data fields:
    "rain24":0.0,
    "soilMoist4":null
 }
-
+```
 
 Author
 ------
@@ -131,4 +129,4 @@ Apache License, Version 2.0. See LICENSE.
 
 Source
 ------
-https://github.com/ampledata/weewx_fishwheel
+https://github.com/ampledata/weewx_wxPublish
