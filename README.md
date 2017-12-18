@@ -75,7 +75,6 @@ weewx.conf, containing all weewx supported data fields:
    "sunrise":"2015-12-31 15:48:00",
    "windDir":63.0,
    "radiation":null,
-   "stormStart":null,
    "inTemp":72.4,
    "inHumidity":29.0,
    "hourRain":0.0,
