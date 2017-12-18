@@ -100,7 +100,7 @@ class wxPublishThread(weewx.restx.RESTThread):
         try:
             # fix datetimes
             _us_record['dateTime'] = self.convert_datetime(_us_record['dateTime'])
-            _us_record['stormStart'] = self.convert_datetime(_us_record['stormStart'])
+            # _us_record['stormStart'] = self.convert_datetime(_us_record['stormStart']) // deprecated weewx 3.7.1
             _us_record['sunrise'] = self.convert_datetime(_us_record['sunrise'])
             _us_record['sunset'] = self.convert_datetime(_us_record['sunset'])
 
