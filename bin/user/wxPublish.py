@@ -1,15 +1,18 @@
 __author__ = 'Mike Zimmerman <mike@fishwheel.com>'
 __license__ = 'Apache License, Version 2.0'
-__copyright__ = 'Copyright 2015 Fishwheel'
+__copyright__ = 'Copyright 2021 Fishwheel'
 
-
-import Queue
 import socket
 import sys
 import syslog
 import urllib
 import urllib2
 import datetime
+is_py2 = sys.version[0] == '2'
+if is_py2:
+    import Queue as queue
+else:
+    import queue as queue
 
 import weewx
 import weewx.restx
