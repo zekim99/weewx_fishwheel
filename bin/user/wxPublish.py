@@ -5,12 +5,12 @@ __copyright__ = 'Copyright 2021 Fishwheel'
 import socket
 import sys
 import syslog
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import datetime
 is_py2 = sys.version[0] == '2'
 if is_py2:
-    import Queue as queue
+    import queue as queue
 else:
     import queue as queue
 
@@ -63,7 +63,7 @@ class wxPublishThread(weewx.restx.RESTThread):
     def __init__(self, queue, manager_dict,
                  host=DEFAULT_HOST, port=DEFAULT_PORT, prefix=DEFAULT_PREFIX,
                  protocol_name="FW-Protocol",
-                 post_interval=None, max_backlog=sys.maxint, stale=None,
+                 post_interval=None, max_backlog=sys.maxsize, stale=None,
                  log_success=True, log_failure=True,
                  timeout=10, max_tries=3, retry_wait=5):
 
@@ -126,13 +126,13 @@ class wxPublishThread(weewx.restx.RESTThread):
         }
 
         try:
-            req = urllib2.Request(_url, body, headers)
-            res = urllib2.urlopen(req)
-        except urllib2.HTTPError as e:
+            req = urllib.request.Request(_url, body, headers)
+            res = urllib.request.urlopen(req)
+        except urllib.error.HTTPError as e:
             syslog.syslog(syslog.LOG_INFO,
                 'Unable to publish: [{0}], {1}'.format(e.code, e.reason))
             return
-        except urllib2.URLError as e:
+        except urllib.error.URLError as e:
             syslog.syslog(syslog.LOG_INFO,
                 'Unable to publish: {0}'.format(e.reason))
             return
