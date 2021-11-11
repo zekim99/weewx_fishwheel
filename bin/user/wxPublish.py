@@ -125,11 +125,11 @@ class wxPublishThread(weewx.restx.RESTThread):
         try:
             req = urllib2.Request(_url, body, headers)
             res = urllib2.urlopen(req)
-        except urllib2.HTTPError, e:
+        except urllib2.HTTPError as e:
             syslog.syslog(syslog.LOG_INFO,
                 'Unable to publish: [{0}], {1}'.format(e.code, e.reason))
             return
-        except urllib2.URLError, e:
+        except urllib2.URLError as e:
             syslog.syslog(syslog.LOG_INFO,
                 'Unable to publish: {0}'.format(e.reason))
             return
