@@ -8,11 +8,7 @@ import syslog
 import urllib.request, urllib.parse, urllib.error
 import urllib.request, urllib.error, urllib.parse
 import datetime
-is_py2 = sys.version[0] == '2'
-if is_py2:
-    import queue as queue
-else:
-    import queue as queue
+import queue as queue
 
 import weewx
 import weewx.restx
@@ -41,7 +37,7 @@ class wxPublish(weewx.restx.StdRESTful):
             'wx_binding'
         )
 
-        self.loop_queue = Queue.Queue()
+        self.loop_queue = queue.Queue()
         self.loop_thread = wxPublishThread(
             self.loop_queue,
             _manager_dict,
@@ -83,17 +79,16 @@ class wxPublishThread(weewx.restx.RESTThread):
         self.port = port
         self.prefix = prefix
 
-
     def convert_datetime(self, dt):
         if dt is not None:
             return str(datetime.datetime.utcfromtimestamp(dt))
 
 
     def process_record(self, record, dbmanager):
-        _url = "http://" + self.host + ":" + str(self.port) + "/" + self.prefix
-        syslog.syslog(syslog.LOG_DEBUG,
-            "url is %s" % (_url)
-        )
+        #_url = "http://" + self.host + ":" + str(self.port) + "/" + self.prefix
+        #syslog.syslog(syslog.LOG_DEBUG,
+        #    "url is %s" % (_url)
+        #)
 
         # Get the full record by querying the database ...
         _full_record = self.get_record(record, dbmanager)
@@ -119,7 +114,7 @@ class wxPublishThread(weewx.restx.RESTThread):
         # headers
         headers = {
             'User-Agent': 'weewx/%s' % weewx.__version__,
-            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Cache-Control': 'no-cache, no-store, must-revalidate', 
             'Pragma': 'no-cache',
             'Expires': 0,
             'Content-type': 'text/json'
