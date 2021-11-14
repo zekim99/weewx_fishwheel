@@ -5,11 +5,10 @@ __copyright__ = 'Copyright 2021 Fishwheel'
 import socket
 import sys
 import syslog
-import urllib.request, urllib.parse, urllib.error
-import urllib.request, urllib.error, urllib.parse
+import json
+import requests
 import datetime
 import queue as queue
-
 import weewx
 import weewx.restx
 import weeutil.weeutil
@@ -83,12 +82,9 @@ class wxPublishThread(weewx.restx.RESTThread):
         if dt is not None:
             return str(datetime.datetime.utcfromtimestamp(dt))
 
-
+    #todo: conditionalize https
     def process_record(self, record, dbmanager):
-        #_url = "http://" + self.host + ":" + str(self.port) + "/" + self.prefix
-        #syslog.syslog(syslog.LOG_DEBUG,
-        #    "url is %s" % (_url)
-        #)
+        _url = "https://" + self.host + ":" + str(self.port) + "/" + self.prefix
 
         # Get the full record by querying the database ...
         _full_record = self.get_record(record, dbmanager)
@@ -105,7 +101,7 @@ class wxPublishThread(weewx.restx.RESTThread):
             # clean up JSON
             body = str(_us_record)
             body = str.replace(body, '\'', '\"')
-            body = str.replace(body, 'None', 'null')
+            body = str.replace(body, 'None', '\"null\"')
         except TypeError:
             syslog.syslog(syslog.LOG_INFO,
                 'unexpected or missing value in payload.')
@@ -114,20 +110,14 @@ class wxPublishThread(weewx.restx.RESTThread):
         # headers
         headers = {
             'User-Agent': 'weewx/%s' % weewx.__version__,
-            'Cache-Control': 'no-cache, no-store, must-revalidate', 
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
             'Pragma': 'no-cache',
-            'Expires': 0,
+            'Expires': '0',
             'Content-type': 'text/json'
         }
 
         try:
-            req = urllib.request.Request(_url, body, headers)
-            res = urllib.request.urlopen(req)
-        except urllib.error.HTTPError as e:
-            syslog.syslog(syslog.LOG_INFO,
-                'Unable to publish: [{0}], {1}'.format(e.code, e.reason))
-            return
-        except urllib.error.URLError as e:
-            syslog.syslog(syslog.LOG_INFO,
-                'Unable to publish: {0}'.format(e.reason))
+            resp = requests.post(_url, data=body, headers=headers, verify=False)
+        except:
+            syslog.syslog(syslog.LOG_INFO, 'Unable to publish to %s' % _url)
             return
